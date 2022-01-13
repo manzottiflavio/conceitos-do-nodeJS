@@ -9,48 +9,52 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
- const users = [];
+const users = [];
 
 function checksExistsUserAccount(request, response, next) {
   const {username}=request.headers;
-
-const user = users.find(user=>user.username===username);
-
-if(!users){
-  return response.status(400).json({error:"users not found"})
-}
-request.user=user;
-
-return next();
+  
+  const user = users.find(user=>user.username===username);
+  
+  if(!users){
+    return response.status(400).json({error:"users not found"})
+  }
+  request.user=user;
+  
+  return next();
 }
 
 app.post('/users', (request, response) => {
   const {name,username}=request.body;
   
   const usersAreadyExisty = users.find(user => user.username === username);
-
+  
   if(usersAreadyExisty){
     return response.status(400).json({error:'usersAreadyExisty'});
-    }
-
+  }
+  
   const user=({ 
     id: uuidv4(), // precisa ser um uuid
     name, 
     username, 
     todos: []
   })
- return response.status(201).json(user)
-  
   users.push(user)
-
-
-
+  
+  return response.status(201).json(user)
+  
+  
+  
+  
+  
 });
+
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
   const {user}=request;
   const{todos}=request.body;
 
+ 
   if(!todos){
     return response.status(400).json({message:"todos not found"})
   }else{
@@ -59,26 +63,31 @@ app.get('/todos', checksExistsUserAccount, (request, response) => {
  
 });
 
+const todo=[];
+
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  const {username}=request.headers;
-  const{user}=request.body;
+  //const {username}=request.headers;
+  const {user}=request.body;
   const {title, deadline}=request.body;
   
-    const todos={ 
+  const todos={ 
     id: uuidv4(), 
     title,
     done: false, 
     deadline: new Date(deadline), 
     created_at: new Date()
   }
-
   
-if(!todos){
-  return response.status(400).send({message:"error:todos not create"})
-}else{
+  
+  if(!todos){
+    return response.status(400).send({message:"error todos not create"})
+  }
+  
+  todo.push(todos);
   return response.status(201).json(todos)
-};
-user.todo.push(todos);
+  
+  
+  
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
