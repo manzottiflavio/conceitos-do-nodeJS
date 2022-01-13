@@ -77,8 +77,8 @@ if(!todos){
   return response.status(400).send({message:"error:todos not create"})
 }else{
   return response.status(201).json(todos)
-}
- //user.todos.push(todos)
+};
+user.todo.push(todos);
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
